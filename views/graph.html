@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <meta charset="utf-8" />
+    <title>uploadFile</title>
+    <body>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com/modules/export-data.js"></script>
+        <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+        <div id="container"></div>
+        <div>
+            <p><b>작업 단위</b></p>
+            <button type="button" onclick="showTask(0);">task1</button>
+            <button type="button" onclick="showTask(1);">task2</button>
+            <button type="button" onclick="showTask(2);">task3</button>
+            <button type="button" onclick="showTask(3);">task4</button>
+            <button type="button" onclick="showTask(4);">task5</button>
+        </div>
+        <div>
+            <p><b>코어 단위</b></p>
+            <button type="button" onclick="showCore(5);">core1</button>
+            <button type="button" onclick="showCore(6);">core2</button>
+            <button type="button" onclick="showCore(7);">core3</button>
+            <button type="button" onclick="showCore(8);">core4</button>
+            <button type="button" onclick="showCore(9);">core5</button>
+        </div>
+        <script type="text/javascript">
+            maxData = "{{maxData}}".split(',').map(Number)
+            minData = "{{minData}}".split(',').map(Number)
+            avgData = "{{avgData}}".split(',').map(Number)
+            stdData = "{{stdData}}".split(',').map(Number)
+            
+            var num = 5
+            var sMaxData = new Array(Math.ceil(maxData.length/num));
+            var sMinData = new Array(Math.ceil(maxData.length/num));
+            var sAvgData = new Array(Math.ceil(maxData.length/num));
+            var sStdData = new Array(Math.ceil(maxData.length/num));
+
+            for (var i = 0; i < sMaxData.length; i++) {
+                sMaxData[i] = new Array();
+                sMinData[i] = new Array();
+                sAvgData[i] = new Array();
+                sStdData[i] = new Array();
+                for (var j = 0; j<num; j++) {
+                    sMaxData[i][j] = '';
+                    sMinData[i][j] = '';
+                    sAvgData[i][j] = '';
+                    sStdData[i][j] = '';
+                }
+            }
+            for (var i = 0; i<maxData.length; i++) {
+                sMaxData[parseInt(i/num)][i%num]=maxData[i];
+                sMinData[parseInt(i/num)][i%num]=minData[i];
+                sAvgData[parseInt(i/num)][i%num]=avgData[i];
+                sStdData[parseInt(i/num)][i%num]=stdData[i];
+            }
+
+            var chart_load = false;
+            
+            function showTask(n) {
+                chart_load = true;
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'line'
+                    },
+                    title: {
+                        text: `Task${n+1}의 core별 수행능력`
+                    },
+                    subtitle: {
+                        text: '야, 노드 할 수 있어'
+                    },
+                    xAxis: {
+                        categories: ['Core1', 'Core2', 'Core3', 'Core4', 'Core5']
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Values'
+                        }
+                    },
+                    plotOptions: {
+                        series: {
+                            lineWidth: 1,
+                        }
+                    },
+                    series: [{
+                        name: 'max',
+                        data: sMaxData[n]
+                    }, {
+                        name: 'min',
+                        data: sMinData[n]
+                    }, {
+                        name: 'avg',
+                        data: sAvgData[n]
+                    }, {
+                        name: 'std',
+                        data: sStdData[n]
+                    }]
+                });
+            }
+            function showCore(n) {
+                chart_load = true;
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'line'
+                    },
+                    title: {
+                        text: `Core${n-4}의 task별 수행능력`
+                    },
+                    subtitle: {
+                        text: '야, 노드 할 수 있어'
+                    },
+                    xAxis: {
+                        categories: ['Task1', 'Task2', 'Task3', 'Task4', 'Task5']
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Values'
+                        }
+                    },
+                    plotOptions: {
+                        series: {
+                            lineWidth: 1,
+                        }
+                    },
+                    series: [{
+                        name: 'max',
+                        data: sMaxData[n]
+                    }, {
+                        name: 'min',
+                        data: sMinData[n]
+                    }, {
+                        name: 'avg',
+                        data: sAvgData[n]
+                    }, {
+                        name: 'std',
+                        data: sStdData[n]
+                    }]
+                });
+            }
+        </script>
+    </body>
+</html>
